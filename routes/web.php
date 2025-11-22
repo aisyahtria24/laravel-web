@@ -18,16 +18,6 @@ Route::get('/mahasiswa', function () {
     return 'Halo Mahasiswa';
 });
 
-Route::get('/nama/{Yolanda}', function ($param1) {
-    return 'Nama Saya: '.$param1;
-});
-
-Route::get('/nim/{pram1?}', function ($param1 = '') {
-    return 'NIM Saya: '.$param1;
-});
-
-Route::get('/mahasiswa/{Yolanda}', [MahasiswaController::class, 'show']);
-
 Route::get('/about', function (){
     return view('halaman-about');
 });
