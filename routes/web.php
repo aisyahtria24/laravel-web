@@ -10,6 +10,10 @@ use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 
+Route::get('/', function () {
+    return view('welcome');
+});
+
 Route::get('/pcr', function () {
     return 'Selamat Datang di Website Kampus PCR!';
 });
