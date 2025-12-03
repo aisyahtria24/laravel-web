@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -58,3 +59,42 @@ Route::get('/auth', function () {
 });
 Route::get('/auth', [AuthController::class, 'index']);
 Route::post('/auth/login', [AuthController::class, 'login']);
+
+
+
+// HALAMAN UNTUK GUEST (BELUM LOGIN)
+Route::middleware('guest')->group(function () {
+    Route::get('/auth', [AuthController::class, 'index'])->name('login');
+    Route::post('/auth/login', [AuthController::class, 'login'])->name('login.process');
+    Route::get('/', function () { return view('welcome'); });
+});
+
+
+// HALAMAN UNTUK USER LOGIN
+Route::middleware('auth')->group(function () {
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Dashboard user biasa
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::post('/question/store', [QuestionController::class, 'store'])->name('question.store');
+    Route::get('/home', [HomeController::class, 'index']);
+
+    // HALAMAN KHUSUS ADMIN
+    Route::middleware(['role:admin'])
+        ->prefix('admin')
+        ->group(function () {
+            Route::resource('user', UserController::class);
+            Route::resource('pelanggan', PelangganController::class);
+        });
+});
+
+
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+Route::get('/multipleuploads', 'MultipleuploadsController@index')->name('uploads');
+Route::post('/save','MultipleuploadsController@store')->name('uploads.store');

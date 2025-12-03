@@ -1,3 +1,4 @@
+@extends('admin.layouts.app')
 @extends('admin.template')
 @section('title', 'Edit User')
 @section('content')

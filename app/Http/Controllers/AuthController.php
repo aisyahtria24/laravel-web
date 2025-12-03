@@ -1,42 +1,60 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Hash;
+
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-
-
+    /**
+     * Tampilkan halaman login
+     */
     public function index()
     {
-        return view('login-form');
+        return view('auth.login');
     }
 
-
+    /**
+     * Proses login
+     */
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required',
-            'password' => 'required'
+        // Validasi input
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        // Coba login
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        if (!$user) {
-            return back()->with('error', 'Email tidak ditemukan.');
+            // Redirect setelah login sukses
+            return redirect()->intended('/dashboard');
         }
 
-        // jika password salah
-        if (!Hash::check($request->password, $user->password)) {
-            return back()->with('error', 'Password salah.');
-        }
+        // Jika gagal login
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ]);
+    }
 
-        // jika berhasil login
-        // (biasanya set session dulu)
-        session(['user_id' => $user->id]);
+    /**
+     * Proses logout
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
 
-        return redirect()->route('dashboard');
+        // Hapus session
+        $request->session()->invalidate();
+
+        // Regenerasi token CSRF
+        $request->session()->regenerateToken();
+
+        // Redirect ke halaman utama
+        return redirect('/');
     }
 }
