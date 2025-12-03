@@ -9,59 +9,42 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-
-    public function index()
-    {
-
-    }
-
-    public function create()
-    {
-
-    }
-
-    public function store(Request $request)
-    {
-
-    }
+    // Show the edit profile form
     public function edit()
     {
-        $user = Auth::user();
-        return view('profile.edit', compact('user'));
+        return view('profile.edit');
     }
 
+    // Update the user's profile picture
     public function update(Request $request)
     {
         $request->validate([
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $user = Auth::user();
 
-    // Jika user upload foto baru
-    if ($request->hasFile('profile_picture')) {
-
-        // Hapus foto lama
+        // Delete the old profile picture if it exists
         if ($user->profile_picture) {
             Storage::disk('public')->delete($user->profile_picture);
         }
 
-        // Simpan foto baru
+        // Store the new profile picture
         $path = $request->file('profile_picture')->store('profile_pictures', 'public');
         $user->profile_picture = $path;
-    }
+        $user->save();
 
-    $user->save();
-      Auth::login($user->fresh());
         return redirect()->route('profile.edit')->with('success', 'Profile picture updated successfully!');
     }
 
+    // Show the user's profile
     public function show()
     {
         $user = Auth::user();
         return view('profile.show', compact('user'));
     }
 
+    // Delete the user's profile picture
     public function destroy()
     {
         $user = Auth::user();
@@ -75,4 +58,3 @@ class ProfileController extends Controller
         return redirect()->route('profile.edit')->with('success', 'Profile picture deleted successfully!');
     }
 }
-

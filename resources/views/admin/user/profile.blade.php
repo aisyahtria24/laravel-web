@@ -23,17 +23,6 @@
         <button type="submit">Update Profile</button>
     </form>
 
-
-    @if($user->profile_picture)
-        <img src="{{ Storage::url($user->profile_picture) }}" alt="Profile Picture" width="200">
-        <br><br>
-        <form action="{{ route('profile.destroy') }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button type="submit">Delete Profile Picture</button>
-        </form>
-    @endif
-
     <br>
     <a href="{{ route('profile.show') }}">Back to Profile</a>
 </body>

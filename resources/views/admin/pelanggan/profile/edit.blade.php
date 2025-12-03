@@ -23,7 +23,6 @@
         <button type="submit">Update Profile</button>
     </form>
 
-
     @if($user->profile_picture)
         <img src="{{ Storage::url($user->profile_picture) }}" alt="Profile Picture" width="200">
         <br><br>
